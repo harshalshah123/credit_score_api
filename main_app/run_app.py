@@ -46,6 +46,7 @@ class CREDIT_SCORE():
 
 
     def _extraction(self,userid,min_line_date):
+        logging.info("Account extraction started...")
         accounts = gb.get_all_bankaccounts(userid)
 
         accounts = accounts[accounts['createdat'] <= min_line_date]
@@ -58,11 +59,14 @@ class CREDIT_SCORE():
         return sourceaccts, trans_df
 
     def _get_features(self):
+        logging.info("Feature extraction started...")
         qual = gq.get_linequalificationmetrics(self.userid)
-
+        logging.info("Balance Consolidation started...")
         master_balances = crf.get_consolidated_balances(self.trans_df, self.sourceaccts, self.min_line_date)
         assert (len(master_balances) > 0)
+        logging.info("Get Raw Features started...")
         cumulative_features = crf.get_raw_features(self.userid, master_balances, 12, prefix='C1')
+        logging.info("Income-Expense Features started...")
         cumulative_income, cumulative_expense = crf.cumulative_income_expense_vars(self.userid, self.trans_df, self.min_line_date,cumulative_features)
         dfs = [cumulative_features, cumulative_income, cumulative_expense,qual]
         features = reduce(lambda left, right: pd.merge(left, right, on=['userid'], how='outer'), dfs)

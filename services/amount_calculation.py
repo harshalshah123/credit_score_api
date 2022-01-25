@@ -1,6 +1,8 @@
 from configs.constants import approved_bins
+import logging
 
 def qualified_amt_calc(features):
+    logging.info("amt calculation started...")
     df = features.copy(deep=True)
     df['monthlyincome_multiplier'] = df.apply(lambda x: 0.70 if x['scoreBin']==1 else
                                                   0.65 if x['scoreBin']==2 else

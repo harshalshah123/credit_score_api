@@ -1,8 +1,9 @@
 import pandas as pd
 from services.utils import woe_transformation
 from configs.constants import predictors
-
+import logging
 def run_model(df,woe_bins,loaded_model):
+    logging.info("Model started...")
     new_bin_cuts = [0, 537, 553, 569, 584, 600, 615, 630, 645,660,1000]
 
 
