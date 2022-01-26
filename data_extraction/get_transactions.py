@@ -18,7 +18,7 @@ def _get_transactions(userid,sourceaccountids):
         df = df[df['source'] == 'Plaid']
         df = df[df['sourceaccountid'].isin(sourceaccountids)]
 
-        for col in ['markedasincome','useridentifiedas','merchantname','name','sourcecategory']:
+        for col in ['markedasincome','useridentifiedas','merchantname','name','sourcecategory','dsidentifiedas','transactiontype']:
             if col not in df.columns:
                 df[col] = np.nan
         # bank_accts = get_bankaccounts(user,sourceaccountid)
