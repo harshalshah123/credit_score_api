@@ -31,7 +31,7 @@ def qualified_amt_calc(features):
 
     df['qualified_plan'] = df.apply(lambda x: 'Dis-qualified' if ((x['monthlyQual']==0 and x['weeklyQual']==0) or x['scoreBin'] not in approved_bins ) else
                                                 'Micro' if x['max_qual']<=100 else
-                                                'Medium' if x['max_qual']>100 else 'Disqualified',axis=1)
+                                                'Medium' if x['max_qual']>100 else 'Not-qualified',axis=1)
 
     df['micro_qualified_amt'] = df.apply(lambda x: 40 if (x['qualified_plan']=='Micro' and x['max_qual']<40) else
                                                     x['max_qual'] if (x['qualified_plan']=='Micro' and x['max_qual']>40) else

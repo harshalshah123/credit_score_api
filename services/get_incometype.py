@@ -13,10 +13,10 @@ class INCOME_TYPE():
     def __init__(self,trans,min_line_date):
         self.trans = trans[trans['date']<=min_line_date].copy()
         # self.income_trans,self.expense_trans,self.trans = self.get_income_trans(self.trans)
-        self.income_trans = self.trans[self.trans['transactiontype']==2]
-        # self.income_trans = self.trans[self.trans['dsidentifiedas']=='income']
-        self.expense_trans = self.trans[self.trans['transactiontype']==0]
-        # self.expense_trans = self.trans[(self.trans['dsidentifiedas']=='bill'|self.trans['dsidentifiedas']=='expense')]
+        # self.income_trans = self.trans[self.trans['transactiontype']==2]
+        self.income_trans = self.trans[self.trans['dsidentifiedas']=='income']
+        # self.expense_trans = self.trans[self.trans['transactiontype']==0]
+        self.expense_trans = self.trans[(self.trans['dsidentifiedas']=='bill'|self.trans['dsidentifiedas']=='expense')]
 
     def get_income_trans(self,df):
         logging.info("Started to tag Income....")
