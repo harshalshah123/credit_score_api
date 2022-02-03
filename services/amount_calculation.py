@@ -19,7 +19,7 @@ def qualified_amt_calc(features):
     df['weeklyQualifiedAmt'] = df.apply(lambda x: 0 if x['weeklyInstallment'] < 0 else x['weeklyInstallment'],axis=1)
 
     df['monthlyQualifiedAmt_1'] = df.apply(lambda x:0 if (x['biweeklyInstallment']<0 or x['weeklyInstallment']<0) else x['monthlyQualifiedAmt'],axis=1)
-    df['weeklyQualifiedAmt_1'] = df.apply(lambda x:20 if (x['biweeklyInstallment']<0 or x['weeklyInstallment']<0) else x['weeklyQualifiedAmt'],axis=1)
+    df['weeklyQualifiedAmt_1'] = df.apply(lambda x:40 if (x['biweeklyInstallment']<0 or x['weeklyInstallment']<0) else x['weeklyQualifiedAmt'],axis=1)
 
     df['monthlyQual'] = df.apply(lambda x: 200 if x['monthlyQualifiedAmt_1']>200 else round(x['monthlyQualifiedAmt_1'],-1),axis=1)
     df['weeklyQual'] = df.apply(lambda x: 100 if x['weeklyQualifiedAmt_1']>100 else
