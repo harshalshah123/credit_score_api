@@ -29,7 +29,7 @@ def qualified_amt_calc(features):
     df['max_qual'] = df[['monthlyQual','weeklyQual']].max(axis=1)
     df['max_qual'] = df.apply(lambda x: abs(x['primaryLenders_avg_debt_amt_1m']) if (x['max_qual'] > abs(x['primaryLenders_avg_debt_amt_1m']) and abs(x['primaryLenders_avg_debt_amt_1m']) > 0) else x['max_qual'],axis=1)
 
-    df['qualified_plan'] = df.apply(lambda x: 'Dis-qualified' if ((x['monthlyQual']==0 and x['weeklyQual']==0) or x['scoreBin'] not in approved_bins ) else
+    df['qualified_plan'] = df.apply(lambda x: 'Not-qualified' if ((x['monthlyQual']==0 and x['weeklyQual']==0) or x['scoreBin'] not in approved_bins ) else
                                                 'Micro' if x['max_qual']<=100 else
                                                 'Medium' if x['max_qual']>100 else 'Not-qualified',axis=1)
 
