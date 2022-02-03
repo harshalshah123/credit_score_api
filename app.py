@@ -52,18 +52,18 @@ def add_message():
             # scored_df = sim.final_df[response_cols]
             # scored_df['DS_CALCULATED_FLAG'] = sim.model_score_flag
             # scored_df['created_date'] = start_time
-            features = sim.final_df[predictors].to_dict('records')
-            transformed = sim.transformed_df[predictors].to_dict('records')
-            scores = sim.final_df[score_cols].to_dict('records')
+            features = sim.final_df[predictors].to_dict('records')[0]
+            transformed = sim.transformed_df[predictors].to_dict('records')[0]
+            scores = sim.final_df[score_cols].to_dict('records')[0]
             try:
-                other_para = sim.final_df[other_cols].to_dict('records')
+                other_para = sim.final_df[other_cols].to_dict('records')[0]
             except:
-                other_para = []
+                other_para = {}
             data_df['model_score_flag'] = sim.model_score_flag
             userinfo = data_df.to_dict('records')
 
             # a[0]['payment_dates'] = sim.incomeobj.income_prediction_dates
-            d = {"data":{"userid":userinfo,"features": features,'transformed_data':transformed,'qualification':scores,'otherParameters':other_para}}
+            d = {"data":{"userid":data_df['userid'][0],"features": features,'transformed_data':transformed,'qualification':scores,'otherParameters':other_para,'model_score_flag':sim.model_score_flag,'created_time':start_time}}
             logging.info("Scoring Response.. ==:: %s ", str(d))
         else:
             error_df = data_df[['userid']].copy()
