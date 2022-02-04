@@ -5,14 +5,14 @@ import numpy as np
 def qualified_amt_calc(features):
     logging.info("amt calculation started...")
     df = features.copy(deep=True)
-    df['monthlyincome_multiplier'] = df.apply(lambda x: 0.70 if x['scoreBin']==1 else
-                                                  0.65 if x['scoreBin']==2 else
-                                                    0.6 if x['scoreBin']==3 else
-                                                    0.55 if x['scoreBin']==4 else 0.5,axis=1)
-    df['weeklyincome_multiplier'] = df.apply(lambda x: 0.50 if x['scoreBin'] == 1 else
-                                                        0.45 if x['scoreBin'] == 2 else
-                                                            0.4 if x['scoreBin'] == 3 else
-                                                                0.35 if x['scoreBin'] == 4 else 0.3, axis=1)
+    df['monthlyincome_multiplier'] = df.apply(lambda x: 0.60 if x['scoreBin']==1 else
+                                                  0.55 if x['scoreBin']==2 else
+                                                    0.5 if x['scoreBin']==3 else
+                                                    0.45 if x['scoreBin']==4 else 0.4,axis=1)
+    df['weeklyincome_multiplier'] = df.apply(lambda x: 0.40 if x['scoreBin'] == 1 else
+                                                        0.35 if x['scoreBin'] == 2 else
+                                                            0.3 if x['scoreBin'] == 3 else
+                                                                0.25 if x['scoreBin'] == 4 else 0.2, axis=1)
     df['biweeklyInstallment'] = df.apply(lambda x: ((x['monthlyIncome']*x['monthlyincome_multiplier'])+x['monthlyExp'])/2.0,axis=1)
     df['weeklyInstallment'] = df.apply(lambda x: (x['weeklyIncome']*x['weeklyincome_multiplier'])+x['weeklyExp'],axis=1)
 
@@ -47,5 +47,6 @@ def qualified_amt_calc(features):
     df['micro_qualified_amt'] = np.where(df['micro_qualified_amt']>100,100,df['micro_qualified_amt'])
     # df['medium_qualified_amt'] = np.where(df['medium_qualified_amt']>150,150,df['medium_qualified_amt'])
     df['medium_qualified_amt'] = np.where(df['qualified_plan']=='Medium',150,df['medium_qualified_amt'])
+    df['micro_qualified_amt'] = np.where(df['qualified_plan']=='Medium',100,df['micro_qualified_amt'])
 
     return df[['userid','qualified_plan','micro_qualified_amt','medium_qualified_amt','min_qual','max_qual']]
