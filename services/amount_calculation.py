@@ -1,5 +1,6 @@
 from configs.constants import approved_bins
 import logging
+import numpy as np
 
 def qualified_amt_calc(features):
     logging.info("amt calculation started...")
@@ -21,7 +22,7 @@ def qualified_amt_calc(features):
     df['monthlyQualifiedAmt_1'] = df.apply(lambda x:0 if (x['biweeklyInstallment']<0 or x['weeklyInstallment']<0) else x['monthlyQualifiedAmt'],axis=1)
     df['weeklyQualifiedAmt_1'] = df.apply(lambda x:40 if (x['biweeklyInstallment']<0 or x['weeklyInstallment']<0) else x['weeklyQualifiedAmt'],axis=1)
 
-    df['monthlyQual'] = df.apply(lambda x: 200 if x['monthlyQualifiedAmt_1']>200 else round(x['monthlyQualifiedAmt_1'],-1),axis=1)
+    df['monthlyQual'] = df.apply(lambda x: 150 if x['monthlyQualifiedAmt_1']>150 else round(x['monthlyQualifiedAmt_1'],-1),axis=1)
     df['weeklyQual'] = df.apply(lambda x: 100 if x['weeklyQualifiedAmt_1']>100 else
                                           40 if (round(x['weeklyQualifiedAmt_1'],-1) == 0 and x['weeklyQualifiedAmt_1'] >0) else round(x['weeklyQualifiedAmt_1'],-1),axis=1)
 
@@ -40,5 +41,11 @@ def qualified_amt_calc(features):
 
     df['medium_qualified_amt'] = df.apply(lambda x: x['max_qual'] if x['qualified_plan']=='Medium' else 0,axis=1)
 
+    df['micro_qualified_amt'] = df['micro_qualified_amt'].round(-1)
+    df['medium_qualified_amt'] = df['medium_qualified_amt'].round(-1)
+
+    df['micro_qualified_amt'] = np.where(df['micro_qualified_amt']>100,100,df['micro_qualified_amt'])
+    # df['medium_qualified_amt'] = np.where(df['medium_qualified_amt']>150,150,df['medium_qualified_amt'])
+    df['medium_qualified_amt'] = np.where(df['qualified_plan']=='Medium',150,df['medium_qualified_amt'])
 
     return df[['userid','qualified_plan','micro_qualified_amt','medium_qualified_amt','min_qual','max_qual']]

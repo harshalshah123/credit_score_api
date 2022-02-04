@@ -185,3 +185,10 @@ def woe_transformation(X, woe_bins, reverse_flag=False):
         var_woe.sort_index(inplace=True)
         woe_data = woe_data.join(var_woe)
     return woe_data
+
+
+def rename_dict_keys(mydict):
+    mydict = {k.lower(): v for k, v in mydict.items()}
+    mydict = {k.replace(' ','_'): v for k, v in mydict.items()}
+
+    return mydict

@@ -5,6 +5,7 @@ import json #, ast
 import numpy as np
 import pandas as pd
 import pickle
+from services.utils import rename_dict_keys
 from configs.config import LOGGER_PATH as lp,MODEL_PATH,ip_address
 from configs.constants import response_cols,predictors,score_cols,other_cols
 from flask import Flask, request, jsonify
@@ -52,32 +53,37 @@ def add_message():
             # scored_df = sim.final_df[response_cols]
             # scored_df['DS_CALCULATED_FLAG'] = sim.model_score_flag
             # scored_df['created_date'] = start_time
+
             features = sim.final_df[predictors].to_dict('records')[0]
+            features = rename_dict_keys(features)
             transformed = sim.transformed_df[predictors].to_dict('records')[0]
+            transformed = rename_dict_keys(transformed)
             scores = sim.final_df[score_cols].to_dict('records')[0]
+            scores = rename_dict_keys(scores)
             try:
                 other_para = sim.final_df[other_cols].to_dict('records')[0]
+                other_para = rename_dict_keys(other_para)
             except:
                 other_para = {}
             data_df['model_score_flag'] = sim.model_score_flag
-            userinfo = data_df.to_dict('records')
+            # userinfo = data_df.to_dict('records')
 
             # a[0]['payment_dates'] = sim.incomeobj.income_prediction_dates
-            d = {"data":{"userid":data_df['userid'][0],"features": features,'transformed_data':transformed,'qualification':scores,'otherParameters':other_para,'model_score_flag':sim.model_score_flag,'created_time':start_time}}
+            d = {"data":{"userid":data_df['userid'][0],"features": features,'transformed_data':transformed,'qualification':scores,'other_arameters':other_para,'model_score_flag':sim.model_score_flag,'created_time':start_time}}
             logging.info("Scoring Response.. ==:: %s ", str(d))
         else:
             error_df = data_df[['userid']].copy()
-            error_df['errorMsg'] = sim.error_message
+            error_df['error_msg'] = sim.error_message
             error_df['created_date'] = start_time
-            error_df['DS_CALCULATED_FLAG'] = sim.model_score_flag
+            error_df['model_score_flag'] = sim.model_score_flag
             d = {"data": error_df.to_dict('records')}
             logging.info("Scoring Response.. ==:: %s ", str(d))
 
     else:
         if len(data_df) == 0:
-            d = {"DS_CALCULATED_FLAG": False,"errorMsg": "No Data","created_date": start_time}
+            d = {"model_score_flag": False,"error_msg": "No Data","created_date": start_time}
         else:
-            d = {"DS_CALCULATED_FLAG": False,"errorMsg": "More than one userids in request","created_date": start_time}
+            d = {"model_score_flag": False,"error_msg": "More than one userids in request","created_date": start_time}
 
     return jsonify(d)
 

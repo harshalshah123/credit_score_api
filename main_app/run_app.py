@@ -8,6 +8,7 @@ from data_extraction import get_transactions as gt,get_bankaccounts as gb,get_qu
 from services import cumulative_raw_features as crf,amount_calculation as ac
 from functools import reduce
 from modelling import get_score as gs
+import numpy as np
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -22,6 +23,7 @@ class CREDIT_SCORE():
             self.min_line_date = pd.to_datetime(datetime.datetime.now()) #pd.to_datetime(user_df['min_line_date'][0])
 
             self.sourceaccts, self.trans_df = self._extraction(self.userid,self.min_line_date)
+            assert len(self.trans_df[pd.isnull(self.trans_df['dsidentifiedas'])]) < len(self.trans_df)
             self.features = self._get_features()
             self.transformed_df = gs.run_model(self.features,woe_bins,loaded_model)
             self.final_df = pd.merge(self.features,self.transformed_df[['userid','score','scoreBin']],on='userid',how='left')
@@ -38,7 +40,7 @@ class CREDIT_SCORE():
             logging.info("Error :: %s ", str(ex.__class__) + ' == ' + str(error))
             self.model_score_flag = False
             if ex.__class__ == AssertionError:
-                self.error_message = str("No Data Found...")
+                self.error_message = str("No Data Found Or No Income-Expense Tagging Found...")
             elif str(ex.__class__) == "<class 'Exception'>":
                 self.error_message = ex.args[0]
             else:
